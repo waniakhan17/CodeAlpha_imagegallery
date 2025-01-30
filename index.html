@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Gallery</title>
+    <style>
+        h1{
+            color: #fff;
+            font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+            font-size: 50px;
+            text-align: center;
+            text-decoration: underline;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(90deg, #1a1a1a, #4a90e2);
+        }
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px; 
+            justify-content: center;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: auto;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        .gallery img:hover {
+            transform: scale(1.05);
+        }
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            display: none;
+            flex-direction: column;
+        }
+        .lightbox img {
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 8px;
+            transition: transform 0.3s;
+        }
+        .lightbox img.zoomed {
+            transform: scale(1.5);
+        }
+        .caption {
+            color: white;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .close, .prev, .next {
+            position: absolute;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            user-select: none;
+        }
+        .close {
+            top: 20px;
+            right: 40px;
+        }
+        .prev, .next {
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .prev {
+            left: 20px;
+        }
+        .next {
+            right: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jujutsu Kaisen</h1>
+    <div class="gallery">
+        <img src="img1.jpg" alt="Image 1" onclick="openLightbox(0)">
+        <img src="img2.jpg" alt="Image 2" onclick="openLightbox(1)">
+        <img src="img3.jpg" alt="Image 3" onclick="openLightbox(2)">
+        <img src="img4.jpg" alt="Image 4" onclick="openLightbox(3)">
+        <img src="img5.jpg" alt="Image 5" onclick="openLightbox(4)">
+        <img src="img6.jpg" alt="Image 6" onclick="openLightbox(5)">
+        <img src="img7.jpg" alt="Image 7" onclick="openLightbox(6)">
+        <img src="img8.jpg" alt="Image 8" onclick="openLightbox(7)">
+        <img src="img9.jpg" alt="Image 9" onclick="openLightbox(8)">
+        <img src="img10.jpg" alt="Image 10" onclick="openLightbox(9)">
+        <img src="img11.jpg" alt="Image 11" onclick="openLightbox(10)">
+    </div>
+    
+    <div class="lightbox" id="lightbox" onclick="closeLightbox(event)">
+        <span class="close" onclick="closeLightbox(event)">&times;</span>
+        <span class="prev" onclick="changeImage(-1)">&#10094;</span>
+        <img id="lightbox-img" src="" alt="" onclick="toggleZoom()">
+        <span class="next" onclick="changeImage(1)">&#10095;</span>
+        <div class="caption" id="lightbox-caption"></div>
+    </div>
+    
+    <script>
+        let images = document.querySelectorAll(".gallery img");
+        let lightbox = document.getElementById("lightbox");
+        let lightboxImg = document.getElementById("lightbox-img");
+        let lightboxCaption = document.getElementById("lightbox-caption");
+        let currentIndex = 0;
+        let slideshowInterval;
+
+        function openLightbox(index) {
+            currentIndex = index;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxCaption.textContent = images[currentIndex].alt;
+            lightbox.style.display = "flex";
+            startSlideshow();
+        }
+        
+        function closeLightbox(event) {
+            if (event.target === lightbox || event.target.classList.contains("close")) {
+                lightbox.style.display = "none";
+                stopSlideshow();
+            }
+        }
+        
+        function changeImage(step) {
+            currentIndex += step;
+            if (currentIndex < 0) currentIndex = images.length - 1;
+            if (currentIndex >= images.length) currentIndex = 0;
+            lightboxImg.src = images[currentIndex].src;
+            lightboxCaption.textContent = images[currentIndex].alt;
+        }
+        
+        function startSlideshow() {
+            stopSlideshow();
+            slideshowInterval = setInterval(() => changeImage(1), 3000);
+        }
+
+        function stopSlideshow() {
+            clearInterval(slideshowInterval);
+        }
+
+        function toggleZoom() {
+            lightboxImg.classList.toggle("zoomed");
+        }
+        
+        document.addEventListener("keydown", function(event) {
+            if (lightbox.style.display === "flex") {
+                if (event.key === "ArrowLeft") changeImage(-1);
+                if (event.key === "ArrowRight") changeImage(1);
+                if (event.key === "Escape") closeLightbox(event);
+            }
+        });
+    </script>
+</body>
+</html>
